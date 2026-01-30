@@ -42,8 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
     } catch (PDOException $e) {
-        echo "<h3>เกิดข้อผิดพลาด:</h3>" . $e->getMessage();
-        echo "<br><a href='create_request.php'>กลับไปหน้าฟอร์ม</a>";
+        echo "Error: " . $e->getMessage();
+
+
+        
     }
 } else {
     header("Location: index.php");
