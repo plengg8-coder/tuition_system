@@ -59,7 +59,7 @@
                         <th>สถานศึกษา</th>
                         <th>จำนวนเงิน</th>
                         <th>สถานะ</th>
-                        <th>จัดการ</th>
+                        <th style="width: 150px;">จัดการ</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,10 +80,20 @@
                             echo "<td>" . htmlspecialchars($req['req_school_name']) . "</td>";
                             echo "<td>" . number_format($req['req_tuition_amount'], 2) . "</td>";
                             echo "<td>" . getStatusBadge($req['req_status']) . "</td>";
+                            
+                            // --- ส่วนที่แก้ไข: เพิ่มปุ่ม Print ---
                             echo "<td>
-                                    <a href='#' class='btn btn-sm btn-outline-primary'><i class='fas fa-eye'></i></a>
-                                    <a href='#' class='btn btn-sm btn-outline-secondary'><i class='fas fa-print'></i></a>
+                                    <div class='btn-group' role='group'>
+                                        <a href='#' class='btn btn-sm btn-outline-primary' title='ดูรายละเอียด'>
+                                            <i class='fas fa-eye'></i>
+                                        </a>
+                                        <a href='print_request.php?id={$req['req_id']}' target='_blank' class='btn btn-sm btn-outline-secondary' title='พิมพ์ใบเบิก'>
+                                            <i class='fas fa-print'></i>
+                                        </a>
+                                    </div>
                                   </td>";
+                            // ----------------------------------
+                            
                             echo "</tr>";
                         }
                     } else {
