@@ -1,94 +1,144 @@
 <?php 
-session_start(); 
-if (!isset($_SESSION['mem_id'])) {
-    header("Location: login.php");
-    exit();
+require_once 'db.php';
+
+// สร้าง Mock Session สำหรับการทดสอบ
+if (empty($_SESSION)) {
+    $_SESSION = array(
+        'url' => '/athweb/member',
+        'announcement_shown' => 1,
+        'ses_id' => 3,
+        'ses_user' => 'moremeng',
+        'ses_role' => 'cn3',
+        'ses_position' => 99,
+        'ses_name' => 'ทดสอบระบบ',
+        'ses_sec_id' => 123,
+        'ses_sec_name' => '(ยกเลิก 2025-11-14) ll',
+        'ses_seat' => 'นักวิชาการคอมพิวเตอร์',
+        'log_session' => 'sess_69806da196b124.46386653',
+        'token' => '452246d0eb7403aab5e3720bb68eced5b3afb7cd'
+    );
 }
-require_once 'db.php'; 
+
+// ดึงข้อมูลสมาชิกจาก session
+$ses_id = $_SESSION['ses_id'] ?? null;
+$ses_name = $_SESSION['ses_name'] ?? 'ไม่ระบุ';
+$ses_user = $_SESSION['ses_user'] ?? 'ไม่ระบุ';
+
 ?>
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>สร้างคำขอเบิก</title>
+    <title>สร้างคำขอเบิก - ATH System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --c-coral: #EB5E55; --c-graphite: #3A3335; --c-raspberry: #D81E5B; --c-papaya: #FDF0D5; --c-ash: #C6D8D3; }
-        body { background-color: var(--c-papaya); color: var(--c-graphite); font-family: 'Sarabun', sans-serif; }
-        .card-form { border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 12px; }
-        .card-header-custom { background-color: var(--c-ash); color: var(--c-graphite); font-weight: bold; padding: 15px 20px; }
-        .btn-submit { background-color: var(--c-coral); border: none; color: white; padding: 10px 30px; }
-        .btn-submit:hover { background-color: #d14940; color: white; }
-    </style>
 </head>
-<body class="py-5">
-<div class="container mb-5">
+<body class="bg-light">
+
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-9">
-            <h3 class="mb-4 fw-bold"><i class="fas fa-file-invoice-dollar me-2" style="color: var(--c-raspberry);"></i> สร้างคำขอเบิกค่าเล่าเรียน</h3>
-            
-            <form action="save_request.php" method="POST">
-                <input type="hidden" name="mem_id" value="<?php echo $_SESSION['mem_id']; ?>"> 
-
-                <div class="card card-form mb-4 bg-white">
-                    <div class="card-header-custom"><i class="fas fa-pen-nib me-2"></i> กรอกข้อมูลการเบิก (รายบุคคล)</div>
-                    <div class="card-body p-4">
-                        <div class="row mb-4">
-                            <div class="col-md-7">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="form-label mb-0 fw-bold">เลือกบุตร (ลำดับที่ 1-3)</label>
-                                    <a href="add_family.php" class="btn btn-sm btn-outline-primary rounded-pill" style="font-size: 0.8rem;">
-                                        <i class="fas fa-plus"></i> เพิ่มรายชื่อใหม่
-                                    </a>
-                                </div>
-                                <select name="fam_id" class="form-select form-select-lg" required>
-                                    <option value="">-- กรุณาเลือกรายชื่อ --</option>
-                                    <?php
-                                    // ดึงรายชื่อบุตรเฉพาะของ User ที่ Login
-                                    $stmt = $pdo->prepare("SELECT * FROM ath_member_family WHERE mem_id = ? AND fam_relationship = 1 ORDER BY fam_birthdate ASC");
-                                    $stmt->execute([$_SESSION['mem_id']]);
-                                    $i = 1;
-                                    while ($child = $stmt->fetch()) {
-                                        echo "<option value='{$child['fam_id']}'>{$i}. {$child['fam_name']} (เกิด: {$child['fam_birthdate']})</option>";
-                                        $i++;
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="col-md-5">
-                                <label class="form-label fw-bold">จำนวนเงิน (บาท)</label>
-                                <input type="number" step="0.01" name="amount" class="form-control form-control-lg text-end" placeholder="0.00" required>
-                            </div>
-                        </div>
-                        <hr class="text-muted opacity-25 my-4">
-                        <h6 class="fw-bold mb-3 text-secondary"><i class="fas fa-school me-1"></i> ข้อมูลสถานศึกษา</h6>
-                        <div class="row mb-3">
-                            <div class="col-md-12"><label class="form-label">ชื่อสถานศึกษา</label><input type="text" name="school_name" class="form-control" required></div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-4"><label class="form-label">ระดับชั้น</label>
-                                <select name="school_level" class="form-select" required>
-                                    <option value="ปฐมวัย">ปฐมวัย</option><option value="ประถมศึกษา">ประถมศึกษา</option><option value="มัธยมศึกษา">มัธยมศึกษา</option><option value="อุดมศึกษา">อุดมศึกษา</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4"><label class="form-label">ชั้นปีที่</label><input type="text" name="grade" class="form-control" placeholder="เช่น ป.1" required></div>
-                            <div class="col-md-4"><label class="form-label">เทอม</label>
-                                <select name="semester" class="form-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
-                            </div>
-                        </div>
-                        <div class="row"><div class="col-md-4"><label class="form-label">ปีการศึกษา</label><input type="number" name="academic_year" class="form-control" value="<?php echo date('Y')+543; ?>" required></div></div>
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4><i class="fas fa-file-invoice-dollar"></i> แบบขอเบิกเงินสวัสดิการเกี่ยวกับการศึกษาบุตร</h4>
+                </div>
+                <div class="card-body">
+                    <!-- แสดงข้อมูล Session -->
+                    <div class="alert alert-info mb-4">
+                        <h6 class="alert-heading">ข้อมูลผู้ใช้ปัจจุบัน</h6>
+                        <small>
+                            <strong>ชื่อผู้ใช้:</strong> <?php echo htmlspecialchars($ses_user); ?> | 
+                            <strong>ชื่อเต็ม:</strong> <?php echo htmlspecialchars($ses_name); ?> | 
+                            <strong>รหัสสมาชิก:</strong> <?php echo htmlspecialchars($ses_id); ?>
+                        </small>
                     </div>
-                </div>
 
-                <div class="d-flex justify-content-end align-items-center gap-3 mt-4">
-                    <a href="index.php" class="btn text-secondary">ยกเลิก</a>
-                    <button type="submit" name="action" value="draft" class="btn btn-outline-danger rounded-pill">บันทึกแบบร่าง</button>
-                    <button type="submit" name="action" value="submit" class="btn btn-submit rounded-pill shadow">ยืนยันส่งคำขอ</button>
+                    <form action="save_request.php" method="POST">
+                        
+                        <input type="hidden" name="mem_id" value="<?php echo htmlspecialchars($ses_id); ?>">
+
+                        <h5 class="text-secondary mb-3">ข้อมูลบุตร</h5>
+                        <div class="mb-3">
+                            <label class="form-label">เลือกบุตรที่ต้องการเบิก</label>
+                            <select name="fam_id" class="form-select" required>
+                                <option value="">-- กรุณาเลือก --</option>
+                                <?php
+                                // ดึงรายชื่อลูกจาก DB โดยใช้ ses_id เป็น mem_id
+                                // ค้นหาเฉพาะความสัมพันธ์ = 1 (บุตร) และยังไม่ถูกลบ (fam_deleted_status = 0)
+                                try {
+                                    $stmt = $pdo->prepare("
+                                        SELECT * FROM ath_member_family 
+                                        WHERE mem_id = :mem_id 
+                                        AND fam_relationship = 1 
+                                        AND fam_deleted_status = 0
+                                        ORDER BY fam_name ASC
+                                    ");
+                                    $stmt->execute([':mem_id' => $ses_id]);
+                                    
+                                    if ($stmt->rowCount() > 0) {
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                            echo "<option value='" . htmlspecialchars($row['fam_id']) . "'>";
+                                            echo htmlspecialchars($row['fam_name']);
+                                            echo " (เกิด: " . htmlspecialchars($row['fam_birthdate']) . ")";
+                                            echo "</option>";
+                                        }
+                                    } else {
+                                        echo "<option value='' disabled>ไม่พบข้อมูลบุตร</option>";
+                                    }
+                                } catch (PDOException $e) {
+                                    echo "<option value='' disabled>เกิดข้อผิดพลาดในการดึงข้อมูล</option>";
+                                    error_log("Database Error: " . $e->getMessage());
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <h5 class="text-secondary mb-3 mt-4">ข้อมูลการศึกษา</h5>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">ชื่อสถานศึกษา</label>
+                                <input type="text" name="school_name" class="form-control" placeholder="ระบุชื่อโรงเรียน/มหาวิทยาลัย" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">ระดับการศึกษา</label>
+                                <select name="school_level" class="form-select" required>
+                                    <option value="">-- เลือก --</option>
+                                    <option value="ปฐมวัย">ปฐมวัย (อนุบาล)</option>
+                                    <option value="ประถมศึกษา">ประถมศึกษา</option>
+                                    <option value="มัธยมศึกษา">มัธยมศึกษา</option>
+                                    <option value="ปวช">ปวช (ประเทศศึกษา)</option>
+                                    <option value="ปวส">ปวส (อุตสาหกรรม)</option>
+                                    <option value="อุดมศึกษา">อุดมศึกษา</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">จำนวนเงินที่ขอเบิก (บาท)</label>
+                                <input type="number" name="request_amount" class="form-control" placeholder="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">วันที่ขอเบิก</label>
+                                <input type="date" name="request_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">หมายเหตุ</label>
+                            <textarea name="remark" class="form-control" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="member.php" class="btn btn-secondary">ยกเลิก</a>
+                            <button type="submit" class="btn btn-primary">บันทึกคำขอ</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
