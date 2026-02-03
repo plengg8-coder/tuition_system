@@ -129,7 +129,7 @@ $ses_user = $_SESSION['ses_user'] ?? 'ไม่ระบุ';
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="member.php" class="btn btn-secondary">ยกเลิก</a>
+                            <a href="index.php" class="btn btn-secondary">ยกเลิก</a>
                             <button type="submit" class="btn btn-primary">บันทึกคำขอ</button>
                         </div>
                     </form>
