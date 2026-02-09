@@ -1,34 +1,39 @@
 <?php
+session_start();
 require_once 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 1. รับค่าจากฟอร์ม (ไม่มี Array แล้ว รับค่าตรงๆ)
-    $mem_id = $_POST['mem_id'] ?? 0;
-    $fam_id = $_POST['fam_id'] ?? '';
-    $school_name = $_POST['school_name'] ?? '';
-    $school_level = $_POST['school_level'] ?? '';
-    $grade = $_POST['grade'] ?? '';
-    $semester = $_POST['semester'] ?? 1;
-    $academic_year = $_POST['academic_year'] ?? date('Y')+543;
-    $amount = $_POST['amount'] ?? 0;
-    
-    // 2. กำหนดสถานะตามปุ่มที่กด
-    $status = ($_POST['action'] == 'submit') ? 'submitted' : 'draft';
-
     try {
-        // Validation เบื้องต้น
-        if (empty($fam_id) || empty($amount) || empty($school_name)) {
-            throw new Exception("กรุณากรอกข้อมูลสำคัญให้ครบถ้วน (บุตร, โรงเรียน, จำนวนเงิน)");
-        }
+        // 1. รับค่าจากฟอร์ม (ตามชื่อ name="..." ใน create_request.php ล่าสุด)
+        $mem_id = $_POST['mem_id'];
+        $fam_id = $_POST['fam_id'];
+        
+        $school_name = $_POST['school_name'] ?? '';
+        $school_level = $_POST['school_level'] ?? '';
+        
+        // *จุดที่แก้: ชื่อตัวแปรต้องตรงกับ input name="request_amount"
+        $amount = $_POST['request_amount'] ?? 0; 
+        
+        // *จุดที่แก้: รับวันที่ขอเบิก
+        $request_date = $_POST['request_date'] ?? date('Y-m-d');
+        
+        // *จุดที่แก้: รับหมายเหตุ
+        $remark = $_POST['remark'] ?? '';
 
-        // 3. เตรียม SQL Insert
+        // 2. กำหนดค่า Default สำหรับฟิลด์ที่ Database บังคับต้องมี (แต่ในฟอร์มไม่มี)
+        $grade = '-';           // ชั้นเรียน (ไม่ได้กรอก)
+        $semester = 1;          // เทอม (สมมติเป็น 1)
+        $academic_year = date('Y') + 543; // ปีการศึกษา (ปีปัจจุบัน + 543)
+        
+        // กำหนดสถานะ
+        $status = ($_POST['action'] == 'submit') ? 'submitted' : 'draft';
+
+        // 3. บันทึกลงฐานข้อมูล
         $sql = "INSERT INTO ath_tuition_request 
-                (mem_id, fam_id, req_school_name, req_school_level, req_grade, req_semester, req_academic_year, req_tuition_amount, req_status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                (mem_id, fam_id, req_school_name, req_school_level, req_grade, req_semester, req_academic_year, req_tuition_amount, req_request_date, req_notes, req_status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $pdo->prepare($sql);
-        
-        // 4. บันทึกข้อมูล
         $result = $stmt->execute([
             $mem_id, 
             $fam_id, 
@@ -38,30 +43,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $semester, 
             $academic_year, 
             $amount, 
+            $request_date,
+            $remark, 
             $status
         ]);
 
         if ($result) {
             echo "<script>
-                alert('บันทึกคำขอเรียบร้อยแล้ว'); 
+                alert('บันทึกข้อมูลเรียบร้อยแล้ว'); 
                 window.location='index.php';
             </script>";
         }
 
-    } catch (Exception $e) {
-        // กรณี Error ให้แจ้งเตือนและกลับไปหน้าเดิม
-        echo "<script>
-            alert('เกิดข้อผิดพลาด: " . $e->getMessage() . "'); 
-            window.history.back();
-        </script>";
     } catch (PDOException $e) {
-        echo "<script>
-            alert('Database Error: " . $e->getMessage() . "'); 
-            window.history.back();
-        </script>";
+        // แสดง Error ชัดเจนถ้าบันทึกไม่ได้
+        echo "<h3>เกิดข้อผิดพลาด:</h3>";
+        echo "Error: " . $e->getMessage();
+        echo "<br><br><a href='create_request.php'>กลับไปหน้าฟอร์ม</a>";
     }
 } else {
-    // ถ้าเข้าหน้านี้โดยไม่ได้ Submit Form
     header("Location: index.php");
     exit();
 }
