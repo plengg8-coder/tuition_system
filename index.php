@@ -2,13 +2,13 @@
 session_start(); 
 require_once 'db.php';
 
-// --- [ส่วนที่เพิ่ม] บังคับใช้รหัสสมาชิก 3 (ตามรูปที่คุณส่งมา) ---
-// เพื่อให้หน้า Dashboard แสดงข้อมูลของ User ID 3 ที่คุณเพิ่งบันทึกไป
-$_SESSION['mem_id'] = 3; 
-$_SESSION['mem_name'] = 'ทดสอบระบบ (User ID 3)';
-$_SESSION['mem_position'] = 'นักวิชาการคอมพิวเตอร์';
-// -----------------------------------------------------------
-
+// --- ส่วนจัดการ Session (Mockup สำหรับทดสอบ) ---
+if (empty($_SESSION['mem_id'])) {
+    $_SESSION['mem_id'] = 3; 
+    $_SESSION['mem_name'] = 'ทดสอบระบบ (User ID 3)';
+    $_SESSION['mem_position'] = 'นักวิชาการคอมพิวเตอร์';
+}
+// ------------------------------------------------
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -65,7 +65,6 @@ $_SESSION['mem_position'] = 'นักวิชาการคอมพิวเ
                 <div class="card-body">
                     <h6 class="opacity-75">รอการอนุมัติ</h6>
                     <?php
-                        // นับจำนวนรายการที่รออนุมัติ
                         $count_pending = $pdo->prepare("SELECT COUNT(*) FROM ath_tuition_request WHERE mem_id = ? AND req_status IN ('submitted', 'finance_received')");
                         $count_pending->execute([$_SESSION['mem_id']]);
                         $pending_num = $count_pending->fetchColumn();
@@ -107,7 +106,6 @@ $_SESSION['mem_position'] = 'นักวิชาการคอมพิวเ
                 <tbody class="bg-white">
                     <?php
                     try {
-                        // SQL: ดึงข้อมูลคำขอ + ชื่อลูก (JOIN ตาราง) เฉพาะของ mem_id นี้ (คือ 3)
                         $sql = "SELECT r.*, f.fam_name 
                                 FROM ath_tuition_request r 
                                 LEFT JOIN ath_member_family f ON r.fam_id = f.fam_id 
@@ -120,10 +118,7 @@ $_SESSION['mem_position'] = 'นักวิชาการคอมพิวเ
 
                         if (count($requests) > 0) {
                             foreach ($requests as $req) {
-                                // แปลงวันที่เป็นรูปแบบไทย (เช่น 03/02/2569)
                                 $date = date('d/m', strtotime($req['req_request_date'])) . '/' . (date('Y', strtotime($req['req_request_date'])) + 543);
-                                
-                                // จัดการกรณีชื่อลูกหาย
                                 $child_name = htmlspecialchars($req['fam_name'] ?? 'ไม่ระบุ');
 
                                 echo "<tr>";
@@ -131,17 +126,16 @@ $_SESSION['mem_position'] = 'นักวิชาการคอมพิวเ
                                 echo "<td><div class='fw-bold text-dark'>{$child_name}</div></td>";
                                 echo "<td><span class='text-muted small'>" . htmlspecialchars($req['req_school_name']) . "</span></td>";
                                 echo "<td><b class='text-primary'>" . number_format($req['req_tuition_amount'], 2) . "</b></td>";
-                                echo "<td>" . getStatusBadge($req['req_status']) . "</td>"; // ใช้ฟังก์ชันจาก db.php
+                                echo "<td>" . getStatusBadge($req['req_status']) . "</td>"; 
                                 echo "<td class='text-center'>
                                         <div class='btn-group'>
                                             <a href='print_request.php?id={$req['req_id']}' target='_blank' class='btn btn-sm btn-light text-secondary' title='พิมพ์ใบเบิก'><i class='fas fa-print'></i></a>
-                                            " . ($req['req_status'] == 'draft' ? "<button class='btn btn-sm btn-light text-danger' title='ลบ'><i class='fas fa-trash'></i></button>" : "") . "
+                                            " . ($req['req_status'] == 'draft' ? "<a href='delete_request.php?id={$req['req_id']}' onclick=\"return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบคำขอนี้?');\" class='btn btn-sm btn-light text-danger' title='ลบ'><i class='fas fa-trash'></i></a>" : "") . "
                                         </div>
                                       </td>";
                                 echo "</tr>";
                             }
                         } else {
-                            // กรณีไม่มีข้อมูล
                             echo "<tr><td colspan='6' class='text-center text-muted py-5'>
                                     <i class='fas fa-folder-open fa-3x mb-3 opacity-50'></i><br>
                                     ยังไม่มีรายการคำขอ
