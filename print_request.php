@@ -86,45 +86,73 @@ function baht_text($number) {
     <title>ใบเบิกเงินสวัสดิการเกี่ยวกับการศึกษาบุตร (แบบ 7223)</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        @page { size: A4; margin: 0; }
+        @page { size: A4; margin: 8mm 10mm; }
+        
         body { 
             font-family: 'Sarabun', sans-serif; 
-            font-size: 14pt; 
-            line-height: 1.4; 
+            font-size: 13pt; 
+            line-height: 1.25; 
             color: #000; 
             background-color: #525659; 
             margin: 0; padding: 20px;
+            -webkit-print-color-adjust: exact !important; 
+            print-color-adjust: exact !important;
         }
+
         .page-a4 {
-            width: 210mm; min-height: 297mm; padding: 15mm 20mm; margin: 0 auto 20px auto;
-            background: white; box-shadow: 0 0 10px rgba(0,0,0,0.5); box-sizing: border-box; position: relative;
+            width: 210mm; min-height: 297mm; padding: 12mm 15mm; margin: 0 auto 20px auto;
+            background: white; box-shadow: 0 0 10px rgba(0,0,0,0.5); box-sizing: border-box; 
+            position: relative;
+            page-break-after: always;
         }
+
+        /* โหมดพิมพ์ (Print) */
         @media print {
-            body { background: none; padding: 0; }
-            .page-a4 { box-shadow: none; margin: 0; width: 100%; page-break-after: always; padding: 10mm 15mm; }
+            body { background: none; padding: 0; margin: 0; }
+            .page-a4 { 
+                box-shadow: none; margin: 0; padding: 0; 
+                width: 100%; min-height: auto; 
+                page-break-after: always; 
+                page-break-inside: avoid;
+            }
             .page-a4:last-child { page-break-after: auto; }
             .no-print { display: none !important; }
+            
+            /* บังคับเส้นให้เครื่องปริ้นเห็นชัดเจน */
+            .form-box, .form-box-p2 { border: 1.5pt solid #000 !important; }
+            .form-section { border-bottom: 1.5pt solid #000 !important; }
+            .chk { border: 1.5pt solid #000 !important; }
+            .chk-letter { border: 1.5pt solid #000 !important; }
+            /* จุดสำคัญ: บังคับเส้นประไม่ให้หายตอนปริ้น */
+            .dotted { color: #000 !important; border-bottom: 1.5pt dotted #000 !important; text-decoration: none !important; }
         }
+
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .bold { font-weight: bold; }
         
-        .form-box { border: 1.5px solid #000; padding: 15px; margin-top: 10px; }
-        .form-section { border-bottom: 1.5px solid #000; padding: 10px 15px; }
+        .form-box { border: 1.5pt solid #000; padding: 8px 12px; margin-top: 5px; box-sizing: border-box; }
+        .form-section { border-bottom: 1.5pt solid #000; padding: 6px 12px; box-sizing: border-box; }
         .form-section:last-child { border-bottom: none; }
-        .form-box-p2 { border: 1.5px solid #000; padding: 0; margin-top: 10px; }
+        .form-box-p2 { border: 1.5pt solid #000; padding: 0; margin-top: 5px; box-sizing: border-box; }
         
-        .dotted { border-bottom: 1px dotted #000; display: inline-block; text-align: center; color: #0000AA; padding: 0 5px; min-height: 1em; }
-        @media print { .dotted { color: #000; border-bottom: none; text-decoration: underline dotted; } }
+        /* สไตล์เส้นประสำหรับเติมคำ */
+        .dotted { 
+            border-bottom: 1.5pt dotted #000; 
+            display: inline-block; 
+            text-align: center; 
+            color: #0000AA; 
+            padding: 0 5px; 
+            min-height: 1.2em; 
+        }
         
-        /* สไตล์กล่อง Checkbox ให้เหมือนในรูปเป๊ะๆ */
-        .chk { display: inline-block; width: 12px; height: 12px; border: 1.5px solid #000; margin: 0 5px; vertical-align: middle; text-align: center; line-height: 12px; font-size: 14px; font-weight: bold;}
-        .chk-letter { display: inline-block; border: 1.5px solid #000; padding: 0 8px; margin: 0 5px; text-align: center; font-size: 12pt;}
+        .chk { display: inline-block; width: 12px; height: 12px; border: 1.5pt solid #000; margin: 0 4px; vertical-align: baseline; text-align: center; line-height: 12px; font-size: 14px; font-weight: bold;}
+        .chk-letter { display: inline-block; border: 1.5pt solid #000; padding: 0 6px; margin: 0 4px; text-align: center; font-size: 11pt;}
         
-        .indent-1 { padding-left: 30px; }
-        .indent-2 { padding-left: 60px; }
+        .indent-1 { padding-left: 25px; }
+        .indent-2 { padding-left: 50px; }
         
-        .flex-row { display: flex; align-items: baseline; }
+        .flex-row { display: flex; align-items: baseline; margin-bottom: 3px; }
         .flex-grow { flex-grow: 1; }
 
         .btn-action { padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block; margin: 0 5px; cursor: pointer; border: none; }
@@ -140,149 +168,149 @@ function baht_text($number) {
     </div>
 
     <div class="page-a4">
-        <div class="text-right bold" style="font-size: 12pt;">แบบ 7223</div>
-        <div class="text-center bold" style="font-size: 16pt; margin-top: 10px;">ใบเบิกเงินสวัสดิการเกี่ยวกับการศึกษาบุตร</div>
-        <div class="text-center bold" style="margin-top: 5px;">
-            โปรดทำเครื่องหมาย <span style="font-size: 16pt;">✔</span> ลงในช่อง <span class="chk"></span> พร้อมทั้งกรอกข้อความที่จำเป็น
+        <div class="text-right bold" style="font-size: 11pt;">แบบ 7223</div>
+        <div class="text-center bold" style="font-size: 15pt; margin-top: 0;">ใบเบิกเงินสวัสดิการเกี่ยวกับการศึกษาบุตร</div>
+        <div class="text-center bold" style="margin-top: 0;">
+            โปรดทำเครื่องหมาย <span style="font-size: 14pt;">✔</span> ลงในช่อง <span class="chk"></span> พร้อมทั้งกรอกข้อความที่จำเป็น
         </div>
 
         <div class="form-box">
             
-            <div class="flex-row" style="margin-bottom: 5px;">
+            <div class="flex-row">
                 <div style="width: 25px;">1.</div>
                 <div>ข้าพเจ้า</div>
                 <div class="dotted flex-grow" style="margin: 0 10px;"><?php echo $data['mem_name']; ?></div>
                 <div>ตำแหน่ง</div>
-                <div class="dotted" style="width: 250px; margin-left: 10px;"><?php echo $data['mem_position']; ?></div>
+                <div class="dotted" style="width: 180px; margin-left: 10px;"><?php echo $data['mem_position']; ?></div>
             </div>
-            <div class="flex-row" style="margin-bottom: 15px;">
+            <div class="flex-row">
                 <div style="width: 25px;"></div>
                 <div>สังกัด</div>
                 <div class="dotted flex-grow" style="margin-left: 10px;"><?php echo $data['mem_department'] ?: 'โรงพยาบาลอ่างทอง'; ?></div>
             </div>
 
-            <div class="flex-row" style="margin-bottom: 5px;">
+            <div class="flex-row" style="margin-top: 5px;">
                 <div style="width: 25px;">2.</div>
                 <div>คู่สมรสของข้าพเจ้าชื่อ</div>
                 <div class="dotted flex-grow" style="margin-left: 10px;"></div>
             </div>
-            <div class="indent-1">
+            <div class="indent-1 flex-row">
                 <span class="chk"></span> ไม่เป็นข้าราชการประจำหรือลูกจ้างประจำ
             </div>
-            <div class="indent-1">
-                <span class="chk"></span> เป็นข้าราชการ <span class="chk" style="margin-left: 15px;"></span> ลูกจ้างประจำ ตำแหน่ง<span class="dotted" style="width:150px;"></span>สังกัด<span class="dotted" style="width:150px;"></span>
+            <div class="indent-1 flex-row">
+                <span class="chk"></span> เป็นข้าราชการ <span class="chk" style="margin-left: 15px;"></span> ลูกจ้างประจำ ตำแหน่ง<span class="dotted" style="width:120px;"></span>สังกัด<span class="dotted" style="width:120px;"></span>
             </div>
-            <div class="indent-1">
+            <div class="indent-1 flex-row">
                 <span class="chk"></span> เป็นพนักงานหรือลูกจ้างใน รัฐวิสาหกิจ/หน่วยงานของทางราชการ ราชการส่วนท้องถิ่น
             </div>
-            <div class="indent-1">
+            <div class="indent-1 flex-row">
                 <span class="chk"></span> กรุงเทพมหานคร องค์กรอิสระ องค์กรมหาชน หรือหน่วยงานอื่นใด
             </div>
-            <div class="indent-2" style="margin-bottom: 15px;">
-                ตำแหน่ง<span class="dotted" style="width: 200px;"></span>สังกัด<span class="dotted flex-grow" style="width: 200px;"></span>
+            <div class="indent-2 flex-row">
+                ตำแหน่ง<span class="dotted" style="width: 120px;"></span>สังกัด<span class="dotted flex-grow" style="width: 120px;"></span>
             </div>
 
-            <div class="flex-row">
+            <div class="flex-row" style="margin-top: 5px;">
                 <div style="width: 25px;">3.</div>
                 <div>ข้าพเจ้าเป็นผู้มีสิทธิและขอใช้สิทธิเนื่องจาก</div>
             </div>
-            <div class="indent-1">
+            <div class="indent-1 flex-row">
                 <span class="chk"></span> เป็นบิดาชอบด้วยกฎหมาย
             </div>
-            <div class="indent-1" style="margin-bottom: 15px;">
+            <div class="indent-1 flex-row">
                 <span class="chk"></span> เป็นมารดา
             </div>
 
-            <div class="flex-row">
+            <div class="flex-row" style="margin-top: 5px;">
                 <div style="width: 25px;">4.</div>
                 <div>ข้าพเจ้าได้จ่ายเงินสำหรับการศึกษาของบุตร ดังนี้</div>
             </div>
-            <div class="indent-2 text-center" style="margin-bottom: 10px;">
+            <div class="indent-2 text-center flex-row" style="justify-content: center; margin-bottom: 5px;">
                 (1) เงินบำรุงการศึกษา <span style="display:inline-block; width: 40px;"></span> (2) เงินค่าเล่าเรียน
             </div>
 
-            <div class="flex-row" style="margin-bottom: 2px;">
+            <div class="flex-row">
                 <div style="width: 30px;"></div>
                 <div style="width: 25px;">1)</div>
                 <div>บุตรชื่อ</div><div class="dotted flex-grow" style="margin: 0 5px;"><?php echo $data['fam_name']; ?></div>
-                <div>เกิดเมื่อ</div><div class="dotted" style="width: 150px; margin-left: 5px;"><?php echo thai_date($data['fam_birthdate']); ?></div>
+                <div>เกิดเมื่อ</div><div class="dotted" style="width: 120px; margin-left: 5px;"><?php echo thai_date($data['fam_birthdate']); ?></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
-                <div>เป็นบุตรลำดับที่ (ของบิดา)</div><div class="dotted" style="width: 60px;"></div>
+            <div class="indent-2 flex-row">
+                <div>เป็นบุตรลำดับที่ (ของบิดา)</div><div class="dotted" style="width: 40px;"></div>
                 <div style="margin-left: 10px;">เป็นบุตรลำดับที่ (ของมารดา)</div><div class="dotted flex-grow"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
+            <div class="indent-2 flex-row">
                 <div>(กรณีเป็นบุตรแทนที่บุตรซึ่งถึงแก่กรรมแล้ว) แทนที่บุตรลำดับที่</div><div class="dotted flex-grow"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
+            <div class="indent-2 flex-row">
                 <div>ชื่อ</div><div class="dotted flex-grow" style="margin: 0 5px;"></div>
-                <div>เกิดเมื่อ</div><div class="dotted" style="width: 100px; margin: 0 5px;"></div>
-                <div>ถึงแก่กรรมเมื่อ</div><div class="dotted" style="width: 100px;"></div>
+                <div>เกิดเมื่อ</div><div class="dotted" style="width: 80px; margin: 0 5px;"></div>
+                <div>ถึงแก่กรรมเมื่อ</div><div class="dotted" style="width: 80px;"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
+            <div class="indent-2 flex-row">
                 <div>สถานศึกษา</div><div class="dotted flex-grow" style="margin: 0 5px;"><?php echo $data['req_school_name']; ?></div>
-                <div>อำเภอ</div><div class="dotted" style="width: 80px; margin: 0 5px;">เมือง</div>
-                <div>จังหวัด</div><div class="dotted" style="width: 80px;">อ่างทอง</div>
+                <div>อำเภอ</div><div class="dotted" style="width: 60px; margin: 0 5px;">เมือง</div>
+                <div>จังหวัด</div><div class="dotted" style="width: 60px;">อ่างทอง</div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 15px;">
-                <div>ชั้นที่ศึกษา</div><div class="dotted" style="width: 150px; margin: 0 5px;"><?php echo $data['req_school_level']; ?></div>
+            <div class="indent-2 flex-row" style="margin-bottom: 8px;">
+                <div>ชั้นที่ศึกษา</div><div class="dotted" style="width: 120px; margin: 0 5px;"><?php echo $data['req_school_level']; ?></div>
                 <div>(1) <span class="chk"></span></div>
                 <div style="margin-left: 10px;">(2) <span class="chk">✔</span></div>
                 <div style="margin-left: 15px;">จำนวน</div><div class="dotted flex-grow" style="margin: 0 5px; text-align: right; font-weight: bold;"><?php echo number_format($data['req_tuition_amount'], 2); ?></div><div>บาท</div>
             </div>
 
-            <div class="flex-row" style="margin-bottom: 2px;">
+            <div class="flex-row">
                 <div style="width: 30px;"></div>
                 <div style="width: 25px;">2)</div>
                 <div>บุตรชื่อ</div><div class="dotted flex-grow" style="margin: 0 5px;"></div>
-                <div>เกิดเมื่อ</div><div class="dotted" style="width: 150px; margin-left: 5px;"></div>
+                <div>เกิดเมื่อ</div><div class="dotted" style="width: 120px; margin-left: 5px;"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
-                <div>เป็นบุตรลำดับที่ (ของบิดา)</div><div class="dotted" style="width: 60px;"></div>
+            <div class="indent-2 flex-row">
+                <div>เป็นบุตรลำดับที่ (ของบิดา)</div><div class="dotted" style="width: 40px;"></div>
                 <div style="margin-left: 10px;">เป็นบุตรลำดับที่ (ของมารดา)</div><div class="dotted flex-grow"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
+            <div class="indent-2 flex-row">
                 <div>(กรณีเป็นบุตรแทนที่บุตรซึ่งถึงแก่กรรมแล้ว) แทนที่บุตรลำดับที่</div><div class="dotted flex-grow"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
+            <div class="indent-2 flex-row">
                 <div>ชื่อ</div><div class="dotted flex-grow" style="margin: 0 5px;"></div>
-                <div>เกิดเมื่อ</div><div class="dotted" style="width: 100px; margin: 0 5px;"></div>
-                <div>ถึงแก่กรรมเมื่อ</div><div class="dotted" style="width: 100px;"></div>
+                <div>เกิดเมื่อ</div><div class="dotted" style="width: 80px; margin: 0 5px;"></div>
+                <div>ถึงแก่กรรมเมื่อ</div><div class="dotted" style="width: 80px;"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
+            <div class="indent-2 flex-row">
                 <div>สถานศึกษา</div><div class="dotted flex-grow" style="margin: 0 5px;"></div>
-                <div>อำเภอ</div><div class="dotted" style="width: 80px; margin: 0 5px;"></div>
-                <div>จังหวัด</div><div class="dotted" style="width: 80px;"></div>
+                <div>อำเภอ</div><div class="dotted" style="width: 60px; margin: 0 5px;"></div>
+                <div>จังหวัด</div><div class="dotted" style="width: 60px;"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 15px;">
-                <div>ชั้นที่ศึกษา</div><div class="dotted" style="width: 150px; margin: 0 5px;"></div>
+            <div class="indent-2 flex-row" style="margin-bottom: 8px;">
+                <div>ชั้นที่ศึกษา</div><div class="dotted" style="width: 120px; margin: 0 5px;"></div>
                 <div>(1) <span class="chk"></span></div>
                 <div style="margin-left: 10px;">(2) <span class="chk"></span></div>
                 <div style="margin-left: 15px;">จำนวน</div><div class="dotted flex-grow" style="margin: 0 5px;"></div><div>บาท</div>
             </div>
 
-            <div class="flex-row" style="margin-bottom: 2px;">
+            <div class="flex-row">
                 <div style="width: 30px;"></div>
                 <div style="width: 25px;">3)</div>
                 <div>บุตรชื่อ</div><div class="dotted flex-grow" style="margin: 0 5px;"></div>
-                <div>เกิดเมื่อ</div><div class="dotted" style="width: 150px; margin-left: 5px;"></div>
+                <div>เกิดเมื่อ</div><div class="dotted" style="width: 120px; margin-left: 5px;"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
-                <div>เป็นบุตรลำดับที่ (ของบิดา)</div><div class="dotted" style="width: 60px;"></div>
+            <div class="indent-2 flex-row">
+                <div>เป็นบุตรลำดับที่ (ของบิดา)</div><div class="dotted" style="width: 40px;"></div>
                 <div style="margin-left: 10px;">เป็นบุตรลำดับที่ (ของมารดา)</div><div class="dotted flex-grow"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
+            <div class="indent-2 flex-row">
                 <div>(กรณีเป็นบุตรแทนที่บุตรซึ่งถึงแก่กรรมแล้ว) แทนที่บุตรลำดับที่</div><div class="dotted flex-grow"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
+            <div class="indent-2 flex-row">
                 <div>ชื่อ</div><div class="dotted flex-grow" style="margin: 0 5px;"></div>
-                <div>เกิดเมื่อ</div><div class="dotted" style="width: 100px; margin: 0 5px;"></div>
-                <div>ถึงแก่กรรมเมื่อ</div><div class="dotted" style="width: 100px;"></div>
+                <div>เกิดเมื่อ</div><div class="dotted" style="width: 80px; margin: 0 5px;"></div>
+                <div>ถึงแก่กรรมเมื่อ</div><div class="dotted" style="width: 80px;"></div>
             </div>
-            <div class="indent-2 flex-row" style="margin-bottom: 2px;">
+            <div class="indent-2 flex-row">
                 <div>สถานศึกษา</div><div class="dotted flex-grow" style="margin: 0 5px;"></div>
-                <div>อำเภอ</div><div class="dotted" style="width: 80px; margin: 0 5px;"></div>
-                <div>จังหวัด</div><div class="dotted" style="width: 80px;"></div>
+                <div>อำเภอ</div><div class="dotted" style="width: 60px; margin: 0 5px;"></div>
+                <div>จังหวัด</div><div class="dotted" style="width: 60px;"></div>
             </div>
             <div class="indent-2 flex-row">
                 <div>ชั้นที่ศึกษา</div><div class="dotted" style="width: 150px; margin: 0 5px;"></div>
@@ -303,11 +331,11 @@ function baht_text($number) {
                     <div style="width: 25px;">5.</div>
                     <div>ข้าพเจ้าขอรับเงินสวัสดิการเกี่ยวกับการศึกษาของบุตร</div>
                 </div>
-                <div class="indent-1 flex-row" style="margin-top: 5px;">
+                <div class="indent-1 flex-row">
                     <span class="chk">✔</span> ตามสิทธิ <span style="display:inline-block; width: 40px;"></span> 
                     <span class="chk"></span> เฉพาะส่วนที่ยังขาดจากสิทธิ &nbsp; เป็นเงิน <div class="dotted flex-grow text-center bold"><?php echo number_format($data['req_tuition_amount'], 2); ?></div> บาท
                 </div>
-                <div class="indent-1 flex-row" style="margin-top: 5px;">
+                <div class="indent-1 flex-row">
                     <div style="width: 100px;"></div>
                     <div>(</div><div class="dotted flex-grow text-center"><?php echo baht_text($data['req_tuition_amount']); ?></div><div>)</div>
                     <div class="chk-letter" style="margin-left: 15px;">ก</div>
@@ -320,40 +348,40 @@ function baht_text($number) {
                     <div>เสนอ</div><div class="dotted flex-grow"></div>
                     <div class="chk-letter" style="margin-left: 15px;">ข</div>
                 </div>
-                <div class="indent-1 flex-row" style="margin-top: 5px;">
-                    <span class="chk" style="margin-top: 5px;">✔</span>
+                <div class="indent-1 flex-row">
+                    <span class="chk">✔</span>
                     <div style="margin-left: 10px;">ข้าพเจ้ามีสิทธิได้รับเงินช่วยเหลือตามพระราชกฤษฎีกาเงินสวัสดิการเกี่ยวกับการศึกษาของบุตรและข้อความที่ระบุข้างต้นเป็นความจริง</div>
                 </div>
-                <div class="indent-1 flex-row" style="margin-top: 5px;">
-                    <span class="chk" style="margin-top: 5px;">✔</span>
+                <div class="indent-1 flex-row">
+                    <span class="chk">✔</span>
                     <div style="margin-left: 10px;">บุตรของข้าพเจ้าอยู่ในข่ายได้รับการช่วยเหลือตามพระราชกฤษฎีกาเงินสวัสดิการเกี่ยวกับการศึกษาของบุตร</div>
                 </div>
-                <div class="indent-1 flex-row" style="margin-top: 5px;">
-                    <span class="chk" style="margin-top: 5px;"></span>
+                <div class="indent-1 flex-row">
+                    <span class="chk"></span>
                     <div style="margin-left: 10px;">เป็นผู้ใช้สิทธิเบิกเงินช่วยเหลือตามพระราชกฤษฎีกาเงินสวัสดิการเกี่ยวกับการศึกษาของบุตร แต่เพียงฝ่ายเดียว</div>
                 </div>
-                <div class="indent-1 flex-row" style="margin-top: 5px;">
-                    <span class="chk" style="margin-top: 5px;"></span>
+                <div class="indent-1 flex-row">
+                    <span class="chk" style="align-self: flex-start; margin-top: 5px;"></span>
                     <div style="margin-left: 10px;">คู่สมรสของข้าพเจ้าได้รับการช่วยเหลือจากรัฐวิสาหกิจ หน่วยงานของทางราชการ ราชการท้องถิ่น กรุงเทพมหานคร องค์กรอิสระ องค์การมหาชน หรือหน่วยงานอื่นใด ต่ำกว่าจำนวนที่ได้รับจากทางราชการ</div>
                 </div>
-                <div class="indent-2 flex-row" style="margin-top: 5px;">
+                <div class="indent-2 flex-row">
                     จำนวน<div class="dotted" style="width: 200px;"></div>บาท
                 </div>
-                <div class="indent-2 flex-row" style="margin-top: 10px;">
+                <div class="indent-2 flex-row" style="margin-top: 5px;">
                     <div style="margin-left: 30px;">ข้าพเจ้าขอรับรองว่ามีสิทธิเบิกได้ตามกฎหมาย ตามจำนวนที่ขอเบิก</div>
                 </div>
                 
-                <div style="margin-top: 20px; padding-left: 50%;">
-                    <div class="flex-row" style="margin-bottom: 5px;">
+                <div style="margin-top: 15px; padding-left: 45%;">
+                    <div class="flex-row">
                         (ลงชื่อ)<div class="dotted flex-grow"></div>ผู้ขอรับสวัสดิการ
                     </div>
-                    <div class="flex-row text-center" style="margin-bottom: 5px;">
+                    <div class="flex-row text-center">
                         (<div class="dotted flex-grow"><?php echo $data['mem_name']; ?></div>)
                     </div>
                     <div class="flex-row">
-                        วันที่<div class="dotted" style="width: 50px;"></div>
+                        วันที่<div class="dotted" style="width: 40px;"></div>
                         เดือน<div class="dotted flex-grow"></div>
-                        พ.ศ.<div class="dotted" style="width: 60px;"></div>
+                        พ.ศ.<div class="dotted" style="width: 50px;"></div>
                     </div>
                 </div>
             </div>
@@ -363,13 +391,13 @@ function baht_text($number) {
                     <div style="width: 25px;">7.</div>
                     <div class="bold">คำอนุมัติ</div>
                 </div>
-                <div class="indent-2" style="margin-top: 5px;">อนุมัติให้เบิกได้</div>
+                <div class="indent-2">อนุมัติให้เบิกได้</div>
                 
-                <div style="margin-top: 15px; padding-left: 40%;">
-                    <div class="flex-row" style="margin-bottom: 5px;">
+                <div style="margin-top: 10px; padding-left: 40%;">
+                    <div class="flex-row">
                         <div style="width: 80px; text-align: right; padding-right: 5px;">(ลงชื่อ)</div><div class="dotted flex-grow"></div>
                     </div>
-                    <div class="flex-row text-center" style="margin-bottom: 5px;">
+                    <div class="flex-row text-center">
                         <div style="width: 80px;"></div>(<div class="dotted flex-grow"></div>)
                     </div>
                     <div class="flex-row">
@@ -383,43 +411,43 @@ function baht_text($number) {
                     <div style="width: 25px;">8.</div>
                     <div class="bold">ใบรับเงิน</div>
                 </div>
-                <div class="indent-2 flex-row" style="margin-top: 5px;">
+                <div class="indent-2 flex-row">
                     <div>ได้รับเงินสวัสดิการเกี่ยวกับการศึกษาของบุตร จำนวน</div><div class="dotted flex-grow text-center"><?php echo number_format($data['req_tuition_amount'], 2); ?></div><div>บาท</div>
                 </div>
-                <div class="indent-1 flex-row" style="margin-top: 5px;">
+                <div class="indent-1 flex-row">
                     <div>(</div><div class="dotted flex-grow text-center"><?php echo baht_text($data['req_tuition_amount']); ?></div><div>) ไว้ถูกต้องแล้ว</div>
                 </div>
                 
-                <div style="margin-top: 20px; padding-left: 40%;">
-                    <div class="flex-row" style="margin-bottom: 5px;">
+                <div style="margin-top: 10px; padding-left: 40%;">
+                    <div class="flex-row">
                         <div style="width: 80px; text-align: right; padding-right: 5px;">(ลงชื่อ)</div><div class="dotted flex-grow"></div>ผู้รับเงิน
                     </div>
-                    <div class="flex-row text-center" style="margin-bottom: 5px;">
+                    <div class="flex-row text-center">
                         <div style="width: 80px;"></div>(<div class="dotted flex-grow"><?php echo $data['mem_name']; ?></div>)
                     </div>
-                    <div class="flex-row" style="margin-bottom: 5px;">
+                    <div class="flex-row">
                         <div style="width: 80px; text-align: right; padding-right: 5px;">(ลงชื่อ)</div><div class="dotted flex-grow"></div>ผู้จ่ายเงิน
                     </div>
-                    <div class="flex-row text-center" style="margin-bottom: 5px;">
+                    <div class="flex-row text-center">
                         <div style="width: 80px;"></div>(<div class="dotted flex-grow"></div>)
                     </div>
                     <div class="flex-row">
                         <div style="width: 80px;"></div>
-                        วันที่<div class="dotted" style="width: 40px;"></div>
+                        วันที่<div class="dotted" style="width: 30px;"></div>
                         เดือน<div class="dotted flex-grow"></div>
-                        พ.ศ.<div class="dotted" style="width: 50px;"></div>
+                        พ.ศ.<div class="dotted" style="width: 40px;"></div>
                     </div>
                 </div>
             </div>
 
-        </div> <div style="margin-top: 20px;">
+        </div> <div style="margin-top: 5px;">
             <div class="bold">คำชี้แจง</div>
-            <div class="flex-row" style="margin-top: 10px;">
-                <div class="chk-letter" style="font-size: 10pt; height: 20px; line-height: 20px;">ก</div>
+            <div class="flex-row">
+                <div class="chk-letter" style="font-size: 10pt; height: 18px; line-height: 18px;">ก</div>
                 <div style="margin-left: 10px;">ให้ระบุการมีสิทธิเพียงใด เมื่อเทียบกับสิทธิที่ได้รับตามพระราชกฤษฎีกาเงินสวัสดิการเกี่ยวกับการศึกษาของบุตร</div>
             </div>
-            <div class="flex-row" style="margin-top: 10px;">
-                <div class="chk-letter" style="font-size: 10pt; height: 20px; line-height: 20px;">ข</div>
+            <div class="flex-row" style="margin-top: 2px;">
+                <div class="chk-letter" style="font-size: 10pt; height: 18px; line-height: 18px;">ข</div>
                 <div style="margin-left: 10px;">ให้เสนอต่อผู้มีอำนาจอนุมัติ</div>
             </div>
         </div>
